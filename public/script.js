@@ -71,9 +71,13 @@ class EducationalScraperUI {
                 throw new Error(result.error || 'Failed to start scraper');
             }
 
-            // Start monitoring progress
-            this.startStatusMonitoring();
-            this.showNotification('Scraper started successfully!', 'success');
+            // Store the scraped data and show results immediately
+            this.currentData = [result.data];
+            this.setButtonState(false);
+            this.hideStatusSection();
+            this.renderResults([result.data]);
+            this.showResultsSection();
+            this.showNotification('Scraping completed successfully!', 'success');
 
         } catch (error) {
             console.error('Error starting scraper:', error);

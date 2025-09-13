@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Data Scraper - mEducation Alliance</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>Educational Data Scraper</h1>
+                </div>
+                <p class="subtitle">mEducation Alliance Research Tools</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Scraper Selection -->
+            <section class="scraper-section">
+                <h2>Choose Your Scraper</h2>
+                <div class="scraper-grid">
+                    <div class="scraper-card" data-scraper="simple">
+                        <div class="card-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Simple Community Scraper</h3>
+                        <p>Quick scraping of educational organizations and mEducation Alliance content. Perfect for getting started!</p>
+                        <div class="card-features">
+                            <span class="feature-tag">Fast</span>
+                            <span class="feature-tag">Beginner-friendly</span>
+                            <span class="feature-tag">Community Focus</span>
+                        </div>
+                        <button class="scraper-btn" data-scraper="simple">
+                            <i class="fas fa-play"></i>
+                            Run Simple Scraper
+                        </button>
+                    </div>
+
+                    <div class="scraper-card" data-scraper="education">
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Education Scraper</h3>
+                        <p>Comprehensive scraping of educational websites, articles, and resources with advanced analysis capabilities.</p>
+                        <div class="card-features">
+                            <span class="feature-tag">Comprehensive</span>
+                            <span class="feature-tag">Multi-format</span>
+                            <span class="feature-tag">Analytics</span>
+                        </div>
+                        <button class="scraper-btn" data-scraper="education">
+                            <i class="fas fa-play"></i>
+                            Run Education Scraper
+                        </button>
+                    </div>
+
+                    <div class="scraper-card" data-scraper="meducation">
+                        <div class="card-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>mEducation Alliance Scraper</h3>
+                        <p>Specialized scraper for mEducation Alliance initiatives, member organizations, and global EdTech trends.</p>
+                        <div class="card-features">
+                            <span class="feature-tag">Alliance Focus</span>
+                            <span class="feature-tag">Global EdTech</span>
+                            <span class="feature-tag">Newsletter Ready</span>
+                        </div>
+                        <button class="scraper-btn" data-scraper="meducation">
+                            <i class="fas fa-play"></i>
+                            Run mEducation Scraper
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Section -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3>Scraping Progress</h3>
+                        <div class="status-indicator">
+                            <div class="spinner"></div>
+                            <span id="statusText">Initializing...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+
+                    <div class="logs-container">
+                        <h4>Live Logs</h4>
+                        <div class="logs-output" id="logsOutput"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>Scraping Results</h2>
+                    <button class="refresh-btn" id="refreshResults">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Results
+                    </button>
+                </div>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Results will be populated here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 mEducation Alliance Educational Data Scraper. Built for research and educational purposes.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,43 +1,68 @@
 class EducationalScraperUI {
     constructor() {
         this.statusInterval = null;
+        this.currentData = [];
         this.init();
     }
 
     init() {
         this.bindEvents();
-        this.loadResults();
     }
 
     bindEvents() {
-        // Scraper buttons
-        document.querySelectorAll('.scraper-btn').forEach(btn => {
+        // Run scraper button
+        document.getElementById('runScraperBtn').addEventListener('click', () => {
+            this.startScraping();
+        });
+
+        // URL input enter key
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.startScraping();
+            }
+        });
+
+        // Example URL buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const scraperType = e.target.closest('.scraper-btn').dataset.scraper;
-                this.startScraper(scraperType);
+                const url = e.target.dataset.url;
+                document.getElementById('urlInput').value = url;
+                this.startScraping();
             });
         });
 
         // Refresh results button
         document.getElementById('refreshResults')?.addEventListener('click', () => {
-            this.loadResults();
+            this.displayResults();
         });
     }
 
-    async startScraper(scraperType) {
-        try {
-            // Disable all scraper buttons
-            this.setScraperButtonsState(true);
+    async startScraping() {
+        const urlInput = document.getElementById('urlInput');
+        const url = urlInput.value.trim();
 
-            // Show status section
+        if (!url) {
+            this.showNotification('Please enter a website URL', 'error');
+            return;
+        }
+
+        if (!this.isValidUrl(url)) {
+            this.showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
+            return;
+        }
+
+        try {
+            // Disable button and show status
+            this.setButtonState(true);
             this.showStatusSection();
 
-            // Start scraper
-            const response = await fetch(`/api/scrape/${scraperType}`, {
+            // Start scraping
+            const response = await fetch('/api/scrape/url', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ url: url })
             });
 
             const result = await response.json();
@@ -48,13 +73,12 @@ class EducationalScraperUI {
 
             // Start monitoring progress
             this.startStatusMonitoring();
-
             this.showNotification('Scraper started successfully!', 'success');
 
         } catch (error) {
             console.error('Error starting scraper:', error);
             this.showNotification(`Error: ${error.message}`, 'error');
-            this.setScraperButtonsState(false);
+            this.setButtonState(false);
             this.hideStatusSection();
         }
     }
@@ -67,13 +91,13 @@ class EducationalScraperUI {
 
                 this.updateStatusDisplay(status);
 
-                // If scraping is complete, stop monitoring and load results
+                // If scraping is complete, stop monitoring and show results
                 if (!status.isRunning && status.progress === 100) {
                     clearInterval(this.statusInterval);
-                    this.setScraperButtonsState(false);
+                    this.setButtonState(false);
                     
                     setTimeout(() => {
-                        this.loadResults();
+                        this.displayResults();
                         this.showResultsSection();
                     }, 1000);
                 }
@@ -92,7 +116,7 @@ class EducationalScraperUI {
 
         if (statusText) {
             statusText.textContent = status.isRunning ? 
-                `Running ${status.currentScraper} scraper...` : 
+                'Scraping website...' : 
                 'Completed';
         }
 
@@ -103,7 +127,7 @@ class EducationalScraperUI {
 
         if (logsOutput && status.logs) {
             logsOutput.innerHTML = status.logs
-                .slice(-10) // Show last 10 logs
+                .slice(-15) // Show last 15 logs
                 .map(log => `<div class="log-entry ${log.includes('Error') ? 'error' : ''}">${this.escapeHtml(log)}</div>`)
                 .join('');
             
@@ -112,16 +136,27 @@ class EducationalScraperUI {
         }
     }
 
-    async loadResults() {
+    async displayResults() {
         try {
             const response = await fetch('/api/results');
             const results = await response.json();
 
-            this.displayResults(results);
+            // Extract the scraped data
+            let scrapedData = [];
+            
+            // Look for data in various result files
+            Object.values(results).forEach(data => {
+                if (Array.isArray(data)) {
+                    scrapedData = scrapedData.concat(data);
+                } else if (data && typeof data === 'object' && data.data) {
+                    if (Array.isArray(data.data)) {
+                        scrapedData = scrapedData.concat(data.data);
+                    }
+                }
+            });
 
-            if (Object.keys(results).length > 0) {
-                this.showResultsSection();
-            }
+            this.currentData = scrapedData;
+            this.renderResults(scrapedData);
 
         } catch (error) {
             console.error('Error loading results:', error);
@@ -129,84 +164,63 @@ class EducationalScraperUI {
         }
     }
 
-    displayResults(results) {
-        const resultsGrid = document.getElementById('resultsGrid');
-        if (!resultsGrid) return;
+    renderResults(data) {
+        const resultsContent = document.getElementById('resultsContent');
+        if (!resultsContent) return;
 
-        resultsGrid.innerHTML = '';
-
-        Object.entries(results).forEach(([filename, data]) => {
-            const resultCard = this.createResultCard(filename, data);
-            resultsGrid.appendChild(resultCard);
-        });
-    }
-
-    createResultCard(filename, data) {
-        const card = document.createElement('div');
-        card.className = 'result-card fade-in';
-
-        const isAnalysis = filename.includes('analysis');
-        const isArray = Array.isArray(data);
-        
-        let stats = {};
-        let preview = '';
-
-        if (isAnalysis && data.total_records !== undefined) {
-            stats = {
-                'Total Records': data.total_records,
-                'Sources': Object.keys(data.sources || {}).length,
-                'Categories': Object.keys(data.categories || {}).length,
-                'Types': Object.keys(data.types || {}).length
-            };
-            preview = JSON.stringify(data, null, 2);
-        } else if (isArray) {
-            stats = {
-                'Total Items': data.length,
-                'Sources': [...new Set(data.map(item => item.source))].length,
-                'Categories': [...new Set(data.map(item => item.category))].length,
-                'Types': [...new Set(data.map(item => item.type))].length
-            };
-            preview = JSON.stringify(data.slice(0, 2), null, 2) + '\n...';
-        } else {
-            stats = {
-                'File Size': `${JSON.stringify(data).length} chars`,
-                'Type': typeof data,
-                'Keys': Object.keys(data).length
-            };
-            preview = JSON.stringify(data, null, 2);
+        if (!data || data.length === 0) {
+            resultsContent.innerHTML = `
+                <div style="text-align: center; color: #666; padding: 2rem;">
+                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <p>No data scraped yet. Try running the scraper on a website!</p>
+                </div>
+            `;
+            return;
         }
 
-        card.innerHTML = `
-            <div class="result-header">
-                <h3>${this.formatFilename(filename)}</h3>
-                <button class="download-btn" onclick="window.open('/api/download/${filename}', '_blank')">
+        const resultsHtml = data.map(item => `
+            <div class="result-item">
+                <h3 class="result-title">${this.escapeHtml(item.title || 'Untitled')}</h3>
+                <div class="result-url">${this.escapeHtml(item.url || '')}</div>
+                <div class="result-content">${this.escapeHtml(this.truncateText(item.content || '', 300))}</div>
+                <div class="result-meta">
+                    ${item.source ? `<span class="meta-tag">Source: ${this.escapeHtml(item.source)}</span>` : ''}
+                    ${item.type ? `<span class="meta-tag">Type: ${this.escapeHtml(item.type)}</span>` : ''}
+                    ${item.category ? `<span class="meta-tag">Category: ${this.escapeHtml(item.category)}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        resultsContent.innerHTML = `
+            ${resultsHtml}
+            <div class="download-section">
+                <button class="download-btn" onclick="window.scraperUI.downloadResults()">
                     <i class="fas fa-download"></i>
-                    Download
+                    Download Results as JSON
                 </button>
             </div>
-            
-            <div class="result-stats">
-                ${Object.entries(stats).map(([label, value]) => `
-                    <div class="stat-item">
-                        <span class="stat-value">${value}</span>
-                        <span class="stat-label">${label}</span>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div class="result-preview">
-                <pre>${this.escapeHtml(preview.substring(0, 1000))}${preview.length > 1000 ? '...' : ''}</pre>
-            </div>
         `;
-
-        return card;
     }
 
-    formatFilename(filename) {
-        return filename
-            .replace(/[_-]/g, ' ')
-            .replace(/\.(json|csv|xlsx)$/i, '')
-            .replace(/\b\w/g, l => l.toUpperCase());
+    downloadResults() {
+        if (!this.currentData || this.currentData.length === 0) {
+            this.showNotification('No data to download', 'error');
+            return;
+        }
+
+        const dataStr = JSON.stringify(this.currentData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `scraped_data_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        this.showNotification('Results downloaded successfully!', 'success');
     }
 
     showStatusSection() {
@@ -232,26 +246,30 @@ class EducationalScraperUI {
         }
     }
 
-    setScraperButtonsState(disabled) {
-        document.querySelectorAll('.scraper-btn').forEach(btn => {
+    setButtonState(disabled) {
+        const btn = document.getElementById('runScraperBtn');
+        if (btn) {
             btn.disabled = disabled;
             if (disabled) {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scraping...';
             } else {
-                const scraperType = btn.dataset.scraper;
-                const icons = {
-                    simple: 'fas fa-rocket',
-                    education: 'fas fa-database',
-                    meducation: 'fas fa-globe'
-                };
-                const labels = {
-                    simple: 'Run Simple Scraper',
-                    education: 'Run Education Scraper',
-                    meducation: 'Run mEducation Scraper'
-                };
-                btn.innerHTML = `<i class="${icons[scraperType]}"></i> ${labels[scraperType]}`;
+                btn.innerHTML = '<i class="fas fa-play"></i> Run Scraper';
             }
-        });
+        }
+    }
+
+    isValidUrl(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
     }
 
     showNotification(message, type = 'info') {
@@ -265,11 +283,11 @@ class EducationalScraperUI {
             background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
             color: white;
             padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
             z-index: 1000;
             animation: slideInRight 0.3s ease-out;
-            max-width: 300px;
+            max-width: 350px;
             font-weight: 500;
         `;
         notification.textContent = message;
@@ -312,5 +330,5 @@ document.head.appendChild(style);
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    new EducationalScraperUI();
+    window.scraperUI = new EducationalScraperUI();
 });

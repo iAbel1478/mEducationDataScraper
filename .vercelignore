@@ -4,6 +4,7 @@ node_modules
 .env.local
 .env.production
 .DS_Store
-*.json
-!package.json
-!package-lock.json
+scraped_data_*.json
+simple_community_*.json
+requirements.txt
+README.md

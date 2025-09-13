@@ -1,0 +1,44 @@
+{
+  "total_records": 18,
+  "sources": {
+    "edutopia_main": 1,
+    "edsurge_main": 1,
+    "edweek_main": 1,
+    "brookings_education": 1,
+    "world_bank_education": 1,
+    "global_partnership_education": 1,
+    "code_org_equity": 1,
+    "khan_academy_mission": 1,
+    "mit_media_lab": 1,
+    "stanford_education": 1,
+    "harvard_education": 1,
+    "meducation_alliance": 7
+  },
+  "types": {
+    "educational_organization": 11,
+    "organization": 1,
+    "initiative": 5,
+    "events": 1
+  },
+  "categories": {
+    "education_technology": 11,
+    "alliance_overview": 1,
+    "mathematics_education": 1,
+    "literacy_development": 1,
+    "stem_education": 1,
+    "digital_literacy": 1,
+    "educational_gaming": 1,
+    "conferences_symposia": 1
+  },
+  "focuses": {
+    "underserved_communities_education": 11,
+    "digital_divide_education": 1,
+    "underserved_students_math": 1,
+    "digital_literacy_access": 1,
+    "girls_stem_underserved": 1,
+    "youth_technology_leadership": 1,
+    "gaming_underserved_education": 1,
+    "global_education_equity": 1
+  },
+  "scraped_at": "2025-08-26T22:46:39.448853"
+}

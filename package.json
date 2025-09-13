@@ -1,7 +1,17 @@
-@@ .. @@
-   "scripts": {
--    "test": "echo \"Error: no test specified\" && exit 1"
-+    "test": "echo \"Error: no test specified\" && exit 1",
-+    "start": "node server.js",
-+    "dev": "node server.js"
-   },
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "This repository contains comprehensive web scraping tools designed to support research and content collection for educational technology organizations, particularly aligned with the mEducation Alliance internship requirements.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

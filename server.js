@@ -207,6 +207,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'static', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Educational Data Scraper Interface running on http://localhost:${PORT}`);
-});
+// Export the app for Vercel
+module.exports = app;
+
+// Only start server if not in Vercel environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Educational Data Scraper Interface running on http://localhost:${PORT}`);
+  });
+}

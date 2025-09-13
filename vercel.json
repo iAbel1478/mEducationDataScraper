@@ -2,14 +2,30 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.js",
+      "src": "api/status.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/results.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/scrape/url.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/status",
+      "dest": "/api/status.js"
+    },
+    {
+      "src": "/api/results",
+      "dest": "/api/results.js"
+    },
+    {
+      "src": "/api/scrape/url",
+      "dest": "/api/scrape/url.js"
     }
   ]
 }

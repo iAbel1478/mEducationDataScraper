@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Wikipedia",
+    "url": "https://www.wikipedia.org/",
+    "content": "Wikipedia Wikipedia The Free Encyclopedia English 7,052,000+ articles 日本語 1,472,000+ 記事 Русский 2 062 000+ статей Deutsch 3.048.000+ Artikel Français 2 707 000+ articles Español 2.059.000+ artículos Italiano 1.934.000+ voci 中文 1,498,000+ 条目 / 條目 Polski 1 667 000+ haseł Português 1.154.000+ artigos Search Wikipedia Afrikaans Shqip العربية Asturianu Azərbaycanca Български 閩南語 / Bân-lâm-gú বাংলা Беларуская Català Čeština Cymraeg Dansk Deutsch Eesti Ελληνικά English Español Esperanto Euskara فارسی Français Galego 한국어 Հայերեն हिन्दी Hrvatski Bahasa Indonesia Italiano עברית ქართული Ladin Latina Latviešu Lietuvių Magyar Македонски Malagasy मराठी مصرى Bahasa Melayu Bahaso Minangkabau မြန်မာဘာသာ Nederlands 日本語 Norsk (bokmål) Norsk (nynorsk) Нохчийн Oʻzbekcha / Ўзбекча Polski Português Қазақша / Qazaqşa / قازاقشا Română Simple English Sinugboanong Binisaya Slovenčina Slovenščina Српски / Srpski Srpskohrvatski / Српскохрватски Suomi Svenska Kiswahili தமிழ் Татарча / Tatarça తెలుగు ภาษาไทย Тоҷикӣ ...",
+    "description": "Wikipedia is a free online encyclopedia, created and edited by volunteers around the world and hosted by the Wikimedia Foundation.",
+    "headings": [],
+    "source": "www.wikipedia.org",
+    "type": "webpage",
+    "category": "scraped_content",
+    "scraped_at": "2025-09-13T19:26:04.279Z",
+    "word_count": 1250,
+    "status": 200
+  }
+]
